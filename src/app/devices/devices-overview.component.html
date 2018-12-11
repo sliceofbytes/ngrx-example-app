@@ -1,0 +1,45 @@
+<h3>Overview</h3>
+{{ devices$ | async | json}}
+<table mat-table *ngIf="!isLoading | async">
+  <thead>
+    <th>ID</th>
+
+    <th>Last Error</th>
+    <th>Last Heartbeat</th>
+    <th>State</th>
+    <th></th>
+  </thead>
+  <tbody>
+    <tr *ngFor="let device of devices$ | async">
+      <td>{{ device.id }}</td>
+      <td>
+        <app-timeago [time]="device.lastErrorTime"></app-timeago>
+        <br />
+        <span *ngIf="device.lastErrorStatus !== undefined">{{device.lastErrorStatus.message}}</span>
+      </td>
+      <td>
+        <app-timeago [time]="device.lastHeartbeatTime"></app-timeago>
+      </td>
+      <td>
+        <span *ngIf="device.state !== undefined">
+          <app-timeago [time]="device.state.updateTime"></app-timeago>
+          <br />
+          State: '{{ device.decodedState }}'
+        </span>
+        <span *ngIf="device.state === undefined">-</span>
+      </td>
+      <td>
+        <button mat-icon-button [matMenuTriggerFor]="menu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<mat-menu #menu="matMenu">
+  <button mat-menu-item (click)="deleteDevice()">
+    <mat-icon>delete</mat-icon>
+    <span>Delete</span>
+  </button>
+</mat-menu>
